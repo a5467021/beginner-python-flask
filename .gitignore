@@ -162,3 +162,6 @@ $RECYCLE.BIN/
 
 # VisualStudioCode
 .vscode
+
+# Python cache file
+__pycache__

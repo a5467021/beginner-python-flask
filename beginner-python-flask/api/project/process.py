@@ -22,6 +22,27 @@ def GetAuth(username = '', password = ''): # Get token for authenticated uesr op
         auth['status'] = 0
     return auth
 
+def GetBookInfo(marc_no):
+    url = lib_host + '/opac/item.php?marc_no=' + marc_no
+    res = requests.get(url)
+    offset = 0
+    soup = BeautifulSoup(res.content.decode(res.encoding), 'html.parser')
+    raw_info = soup.findAll('div', attrs = {'id': 'item_detail'})
+    soup = BeautifulSoup(str(raw_info), 'html.parser')
+    info = soup.findAll('dl')
+    #ret = []
+    #for i in info:
+    #    ret.append(str(i).split('\n')[1:-1])
+    ret = {
+              'bookname': info[0].find('dd').get_text().split('/')[0],
+              'author': info[0].find('dd').get_text().split('/')[1],
+              'publisher': ''.join(info[1].find('dd').get_text().split(',')[:-1]),
+              'pub_time': info[1].find('dd').get_text().split(',')[-1],
+              'ISBN': info[2].find('dd').get_text().split('/')[0],
+              'price': info[2].find('dd').get_text().split('/')[1]
+          }
+    return ret
+
 def GetBookList(title = '', page = '1'): # Get the book list from the 
     url = lib_host + '/opac/openlink.php'
     params = {
@@ -43,10 +64,12 @@ def GetBookList(title = '', page = '1'): # Get the book list from the
     soup = BeautifulSoup(str(table[0]), 'html.parser')
     items = soup.findAll('tr', attrs = {'bgcolor': "#FFFFFF"})
     for item in items:
+        marc_no = item.find('a', attrs = {'target': '_blank'}) .attrs['href']
         item = item.get_text().split('\n')
         ret[len(ret) + 1] = {
                                 'name': item[offset + 0],
                                 'author': item[offset + 1],
+                                'marc_no': marc_no.split('=')[-1],
                                 'publisher': item[offset + 2],
                                 'call_number': item[offset + 3]
                             }

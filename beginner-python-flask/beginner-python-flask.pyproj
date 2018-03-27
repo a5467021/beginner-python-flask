@@ -12,6 +12,12 @@
     <OutputPath>.</OutputPath>
     <Name>beginner-python-flask</Name>
     <RootNamespace>beginner-python-flask</RootNamespace>
+    <IsWindowsApplication>False</IsWindowsApplication>
+    <InterpreterId>{47ddf602-092f-400b-bb46-e083a7d6db64}</InterpreterId>
+    <InterpreterVersion>3.5</InterpreterVersion>
+    <LaunchProvider>Standard Python launcher</LaunchProvider>
+    <CommandLineArguments>runserver</CommandLineArguments>
+    <EnableNativeCodeDebugging>False</EnableNativeCodeDebugging>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -45,6 +51,9 @@
     <Compile Include="api\runserver.py">
       <SubType>Code</SubType>
     </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <InterpreterReference Include="{47ddf602-092f-400b-bb46-e083a7d6db64}\3.5" />
   </ItemGroup>
   <Import Condition="Exists($(PtvsTargetsFile))" Project="$(PtvsTargetsFile)" />
   <Import Condition="!Exists($(PtvsTargetsFile))" Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />

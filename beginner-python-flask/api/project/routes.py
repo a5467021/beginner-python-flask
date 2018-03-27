@@ -39,8 +39,8 @@ def api_login_post(): # Receive user's info and return corresponding token
         data = json.loads(request.data)
     return pack(json.dumps(GetAuth(data['username'], data['password'])))
 
-@app.route('/api/lib', methods = ['GET', 'POST'])
-def api_lib_get(): # Get the result page of the books
+@app.route('/api/lib/search', methods = ['GET', 'POST'])
+def api_lib_search(): # Get the result page of the books
     page = 1
     if request.method == 'GET':
         title = request.args.get('title')
@@ -52,5 +52,40 @@ def api_lib_get(): # Get the result page of the books
         if 'page' in title:
             page = data.get('page')
     if not title:
-        return 'Error: No book title specified. Please check your request.'
+        return '''
+               <html>
+                 <head>
+                   <title>Book search</title>
+                 </head>
+                 <body>
+                   <form action="/api/lib/search" method="get">
+                     <p>Key word(s): </p><input type="text" name="title"></input>
+                     <p>Page: </p><input type="text" name="page"></input>
+                     <input type="submit" value="Get info">
+                   </form>
+                 </body>
+               </html>
+               '''
     return pack(json.dumps(GetBookList(title, page)))
+
+@app.route('/api/lib/info', methods = ['GET', 'POST'])
+def api_lib_info():
+    if request.method == 'GET':
+        marc_no = request.args.get('marc_no')
+    elif request.method == 'POST':
+        marc_no = json.loads(request.data)['marc_no']
+    if not marc_no:
+        return '''
+               <html>
+                 <head>
+                   <title>Book info</title>
+                 </head>
+                 <body>
+                   <form action="/api/lib/info" method="get">
+                     <p>MARC Number: </p><input type="text" name="marc_no"></input>
+                     <input type="submit" value="Get info">
+                   </form>
+                 </body>
+               </html>
+               '''
+    return pack(json.dumps(GetBookInfo(marc_no)))
