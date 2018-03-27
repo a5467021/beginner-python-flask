@@ -22,7 +22,7 @@ def GetAuth(username = '', password = ''): # Get token for authenticated uesr op
         auth['status'] = 0
     return auth
 
-def GetBookInfo(marc_no):
+def GetBookInfo(marc_no): # Get specific information about a book
     url = lib_host + '/opac/item.php?marc_no=' + marc_no
     res = requests.get(url)
     offset = 0
@@ -30,9 +30,6 @@ def GetBookInfo(marc_no):
     raw_info = soup.findAll('div', attrs = {'id': 'item_detail'})
     soup = BeautifulSoup(str(raw_info), 'html.parser')
     info = soup.findAll('dl')
-    #ret = []
-    #for i in info:
-    #    ret.append(str(i).split('\n')[1:-1])
     ret = {
               'bookname': info[0].find('dd').get_text().split('/')[0],
               'author': info[0].find('dd').get_text().split('/')[1],
@@ -43,7 +40,7 @@ def GetBookInfo(marc_no):
           }
     return ret
 
-def GetBookList(title = '', page = '1'): # Get the book list from the 
+def GetBookList(title = '', page = '1'): # Get the book list from the library
     url = lib_host + '/opac/openlink.php'
     params = {
                  'title':         title,
