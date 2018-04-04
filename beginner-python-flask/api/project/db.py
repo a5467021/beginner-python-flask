@@ -13,6 +13,12 @@ password = 'dev0123'
 db = 'devdb'
 charset = 'utf8'
 
+like_column = ['liked_time', 'liker', 'object_type', 'liked_object']
+user_column = ['id', 'username', 'nickname', 'gender', 'comment', 'register_time']
+book_column = ['marc_no', 'book_name', 'author', 'publisher', 'ISBN', 'call_number']
+comment_column = ['id', 'commentor', 'object_type', 'comment_object', 'comment_time', 'content']
+
+
 def Connect():
     conn = pymysql.connect(
                                host = host,
@@ -31,20 +37,18 @@ def DatabaseInit():
                      CREATE TABLE user (
                                            id MEDIUMINT PRIMARY KEY AUTO_INCREMENT NOT NULL,
                                            username CHAR(12),
-                                           realname CHAR(10),
+                                           nickname CHAR(20),
                                            gender CHAR(2),
-                                           school CHAR(20),
                                            comments MEDIUMINT DEFAULT 0,
-                                           register_time TIME DEFAULT NOW()
+                                           register_time DATETIME DEFAULT NOW()
                                        ) ENGINE=InnoDB DEFAULT CHARSET=UTF8
                      '''
     cmd_table_book = '''
                      CREATE TABLE book (
-                                           marc_no CHAR(10),
-                                           bookname VARCHAR(100),
-                                           author VARCHAR(60),
-                                           publisher VARCHAR(40),
-                                           pub_time CHAR(8),
+                                           marc_no INT ZEROFILL PRIMARY KEY AUTO_INCREMENT NOT NULL,
+                                           bookname VARCHAR(50),
+                                           author VARCHAR(50),
+                                           publisher VARCHAR(50),
                                            ISBN CHAR(17),
                                            call_number VARCHAR(30)
                                        ) ENGINE=InnoDB DEFAULT CHARSET=UTF8
@@ -52,45 +56,102 @@ def DatabaseInit():
     cmd_table_comment = '''
                         CREATE TABLE comment (
                                                  id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
-                                                 username CHAR(12),
-                                                 comment_time TIME DEFAULT NOW(),
-                                                 replies MEDIUMINT DEFAULT 0,
-                                                 likes INT DEFAULT 0, 
+                                                 commentor MEDIUMINT,
+                                                 object_type CHAR(5),
+                                                 comment_object INT,
+                                                 comment_time DATETIME DEFAULT NOW(),
                                                  content VARCHAR(500)
                                              ) ENGINE=InnoDB DEFAULT CHARSET=UTF8
                         '''
-    cmd_table_reply = '''
-                      CREATE TABLE reply (
-                                             id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
-                                             username CHAR(12),
-                                             reply_time TIME DEFAULT NOW(),
-                                             reply_to CHAR(12),
-                                             comment_id INT,
-                                             content VARCHAR(200)
-                                         ) ENGINE=InnoDB DEFAULT CHARSET=UTF8
-                      '''
+    cmd_table_likes = '''
+                     CREATE TABLE likes (
+                                           liked_time DATETIME DEFAULT NOW(),
+                                           liker MEDIUMINT,
+                                           object_type CHAR(5),
+                                           liked_object INT
+                                        ) ENGINE=InnoDB DEFAULT CHARSET=UTF8
+                     '''
     cur.execute(cmd_table_user)
     cur.execute(cmd_table_book)
     cur.execute(cmd_table_comment)
-    cur.execute(cmd_table_reply)
+    cur.execute(cmd_table_likes)
     conn.commit()
     conn.close()
     return
 
-def GetComment():
+'''
+This is area for Book Information System.
+'''
+
+def AddNewBook(info = {}):
+    conn = Connect()
+    cur = conn.cursor()
+    cmd = 'INSERT INTO book (marc_no,bookname,author,publisher,ISBN,call_number) values (%s,%s,%s,%s,%s,%s)'
+    cur.execute(cmd, (info['marc_no'], info['bookname'], info['author'], info['publisher'], info['ISBN'], info['call_number']))
+    conn.commit()
+    conn.close()
+    return
+
+def GetBookInfo(bookname = ''):
+    conn = Connect()
+    cur = conn.cursor()
+    cmd = 'SELECT marc_no,bookname,author,publisher,ISBN,call_number FROM book WHERE bookname=%s'
+    cur.execute(cmd, (bookname, ))
+    res = cur.fetchall()
+    conn.commit()
+    conn.close()
+    return res
+
+def ModifyUserInfo(info = {}, bookname = ''):
+    conn = Connect()
+    cur = conn.cursor()
+    cmd = 'UPDATE book SET'
+    for i in info:
+        if i in book_column:
+            cmd = cmd + i + '=' + str(info[i]) + ','
+    cmd = cmd[:-1] + ' WHERE bookname=%s'
+    cur.execute(cmd, (bookname, ))
+    conn.commit()
+    conn.close()
+    return
+
+'''
+This is area for User's Comment System.
+'''
+
+def AddComment():
     pass
 
-def GetReply():
+def AddLike():
     pass
 
-def UserRegister():
+def AddReply():
     pass
 
-def UserLogin():
+def GetCommentByBook():
     pass
 
-def UserComment():
+def GetCommentByUser():
     pass
 
-def UserReply():
+def RemoveLike():
+    pass
+
+'''
+This is area for User's Information System.
+'''
+
+def ContactUser():
+    pass
+
+def GetUserInfo():
+    pass
+
+def LoginUser():
+    pass
+
+def ModifyfUserInfo():
+    pass
+
+def RegisterUser():
     pass

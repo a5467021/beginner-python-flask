@@ -24,7 +24,12 @@ if __name__ == '__main__':
                   runserver - Start the back-end application. Default port is 4001.
               ''')
     elif sys.argv[1] == 'initdb':
-        DatabaseInit()
-        print('Database initialize success.')
+        try:
+            DatabaseInit()
+            print('Database initialize success.')
+        except Exception as err:
+            print("An error occurred:")
+            print(err)
+            print("Probably you should check your network connection to your database?")
     elif sys.argv[1] == 'runserver':
         app.run(host = '127.0.0.1', port = port)

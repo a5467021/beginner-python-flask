@@ -5,22 +5,23 @@ Functions for data processing.
 import json
 import requests
 from bs4 import BeautifulSoup
+from project.db import *
 
 
-auth_host = 'https://os.ncuos.com'
+#auth_host = 'https://os.ncuos.com'
 lib_host = 'http://210.35.251.243'
 
-def GetAuth(username = '', password = ''): # Get token for authenticated uesr operations
-    url = auth_host + '/api/user/token'
-    req = requests.post(url = url, json = {'username': username, 'password': password})
-    auth = {}
-    if req.json()['status'] == 1:
-        auth['token'] = req.json()['token']
-        auth['status'] = 1
-    else:
-        auth['token'] = ''
-        auth['status'] = 0
-    return auth
+#def GetAuth(username = '', password = ''): # Get token for authenticated uesr operations
+#    url = auth_host + '/api/user/token'
+#    req = requests.post(url = url, json = {'username': username, 'password': password})
+#    auth = {}
+#    if req.json()['status'] == 1:
+#        auth['token'] = req.json()['token']
+#        auth['status'] = 1
+#    else:
+#        auth['token'] = ''
+#        auth['status'] = 0
+#    return auth
 
 def GetBookInfo(marc_no): # Get specific information about a book
     url = lib_host + '/opac/item.php?marc_no=' + marc_no
